@@ -40,4 +40,5 @@ qike.localStorage.removeItem = function(key,domain,callback){
             return res;
 	}
     }												    };
-q
+qike.localStorage.key=function(index,domain,callback){};
+qike.localStorage.clear=function(domain,callback){};
