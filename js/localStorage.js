@@ -1,4 +1,4 @@
-ndow.qike = window.qike || {};
+window.qike = window.qike || {};
 window.qike.localStorage = {};
 window.qike.localStorage.isSupportLocalStorage=(function(){
     var m = this;
@@ -19,3 +19,14 @@ qike.localStorage.getItem = function(key,domain,callback){
             return res;
 	}
     }												    };
+qike.localStorage.setItem = function(key,value,domain,callback){
+    var m = this,res;
+    if(m.isSupportLocalStorage){
+    	// 
+        if(!domain || domain===m.currDomain){
+	    res  = localStorage.setItem(key);
+	    typeof callback === 'function' && callback();
+	    return res;
+	}
+    }
+};
