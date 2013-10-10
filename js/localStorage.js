@@ -30,3 +30,14 @@ qike.localStorage.setItem = function(key,value,domain,callback){
 	}
     }
 };
+qike.localStorage.removeItem = function(key,domain,callback){
+    var m = this,res;     
+    if(m.isSupportLocalStorage){
+        // √¥µ”√ª’”√”µ«“÷µ ∫£÷Ωª»
+        if(!domain || domain===m.currDomain){
+            res = localStorage.removeItem(key);
+            typeof callback === 'function' && callback();
+            return res;
+	}
+    }												    };
+q
