@@ -12,7 +12,7 @@ a.flashCookie.flashDom=document.getElementById('J-localStorage-flash');
 a.flashCookie.getItem=function(key){
     var m = this,res;
     try{
-        res = m.flashDom.read(key);
+        res = m.flashDom.getItem(key);
         return res;
     }catch(e){
         return e;
@@ -21,7 +21,7 @@ a.flashCookie.getItem=function(key){
 a.flashCookie.setItem=function(key,value,name){
     var m = this,res;
     try{
-        res = m.flashDom.write(key,value,name);
+        res = m.flashDom.setItem(key,value);
         return res;
     }catch(e){
         return e;
