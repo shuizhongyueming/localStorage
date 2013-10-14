@@ -18,10 +18,41 @@ a.flashCookie.getItem=function(key){
         return e;
     }
 };
-a.flashCookie.setItem=function(key,value,name){
+
+a.flashCookie.setItem=function(key,value){
     var m = this,res;
     try{
         res = m.flashDom.setItem(key,value);
+        return res;
+    }catch(e){
+        return e;
+    }
+};
+
+a.flashCookie.removeItem=function(key){
+    var m = this,res;
+    try{
+        res = m.flashDom.removeItem(key);
+        return res;
+    }catch(e){
+        return e;
+    }
+};
+
+a.flashCookie.clear=function(){
+    var m = this,res;
+    try{
+        res = m.flashDom.clear();
+        return res;
+    }catch(e){
+        return e;
+    }
+};
+
+a.flashCookie.key=function(index){
+    var m = this,res;
+    try{
+        res = m.flashDom.key(index);
         return res;
     }catch(e){
         return e;
