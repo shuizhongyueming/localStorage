@@ -105,7 +105,12 @@ qike.localStorage.loadFlash=function(domain,obj){
 
     console.log('createElement div')
 
-    div.style.display='none';
+    // div.style.visibility='hidden';
+    // div.style.position='absolute';
+    // div.style.top='0px';
+    // div.style.bottom='0px';
+    // div.style.width='1px';
+    // div.style.height='1px';
 
     console.log('hide div')
 
@@ -114,8 +119,8 @@ qike.localStorage.loadFlash=function(domain,obj){
 
     if(m.isIE){
         flash=
-        '<object id="flash" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">'+
-            '<param name="movie" value="'+domain+'GitHub/localStorage/swf/saveLocalData20131015.swf" />'+
+        '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab" width="1px" height="1px">'+
+            '<param name="movie" value="'+domain+'front/wangxing/localStorage/swf/saveLocalData20131015.swf" />'+
             '<param name="quality" value="high" />'+
             '<param name="bgcolor" value="#ffffff" />'+
             '<param name="allowScriptAccess" value="always" />'+
@@ -123,7 +128,7 @@ qike.localStorage.loadFlash=function(domain,obj){
             '<param name="flashvars" value="domain='+domain+'&callback=qike.localStorage.flashCallback" />'+
         '</object>';
     }else{
-        flash='<embed src="'+domain+'GitHub/localStorage/swf/saveLocalData20131015.swf" quality="high" bgcolor="#ffffff" width="740px" height="184px" align="middle" play="true" loop="false" wmode="Transparent" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars="domain='+domain+'&callback=qike.localStorage.flashCallback"></embed>';
+        flash='<embed src="'+domain+'front/wangxing/localStorage/swf/saveLocalData20131015.swf" quality="high" bgcolor="#ffffff" width="1px" height="1px" align="middle" play="true" loop="false" wmode="Transparent" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars="domain='+domain+'&callback=qike.localStorage.flashCallback"></embed>';
     }
     console.log('flash html string is: '+flash)
     div.innerHTML=flash;
@@ -183,13 +188,17 @@ qike.localStorage.loadFlash=function(domain,obj){
 };
 
 qike.localStorage.flashCallback=function(domain){
-    var arr=m[domain].actionArr,
+    alert('aa')
+    console.log('flash is loading')
+    var m = this,
+        arr=m[domain].actionArr,
         len=arr.length,
         i=0,
         win,
-        curr,res;
+        curr,
+        res;
 
-    console.log('flash is loading')
+
 
 
     // 标识IFrame加载完成
