@@ -60,9 +60,15 @@ qike.localStorage.loadIframe=function(domain,obj){
 
         for(i;i<len;i++){
             curr = arr[i];
-            if(curr.action === 'getItem' || curr.action === 'removeItem'){
+            if(curr.action === 'getItem'){
                 res=iframeLocalStorage[curr.action](curr.key);
-            }else if(curr.action === 'setItem'){
+
+                // 在chrome和Firefox下，获取的key不存在返回null，其他返回undefined。统一为null
+                if(res==null){res=null}
+            }else if(curr.action === 'removeItem'){
+                res=iframeLocalStorage[curr.action](curr.key);
+            }
+            else if(curr.action === 'setItem'){
                 res=iframeLocalStorage.key(curr.key,curr.value);
             }else if(curr.action === 'key'){
                 res=iframeLocalStorage.key(curr.key);
@@ -77,6 +83,9 @@ qike.localStorage.loadIframe=function(domain,obj){
 // 获取指定域名下的FlashCookie的数据时，需要加载对应域名下的Flash
 qike.localStorage.loadFlash=function(domain,obj){
     var m = this,d=document,div,flash;
+
+    console.log('function loadFlash');
+
     m[domain]={};
     // 存储在加载过程中，收集到的操作请求，加载完成之后，遍历运行
     // {
@@ -93,40 +102,53 @@ qike.localStorage.loadFlash=function(domain,obj){
     m[domain].isLoading=1;
     
     div=d.createElement('div');
-    div.style='display:none;';
+
+    console.log('createElement div')
+
+    div.style.display='none';
+
+    console.log('hide div')
+
     
+    console.log('createElement div and hide it finish')
+
     if(m.isIE){
         flash=
-        '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">'+
+        '<object id="flash" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">'+
             '<param name="movie" value="'+domain+'GitHub/localStorage/swf/saveLocalData20131015.swf" />'+
             '<param name="quality" value="high" />'+
             '<param name="bgcolor" value="#ffffff" />'+
             '<param name="allowScriptAccess" value="always" />'+
             '<param name="wmode" value="Transparent" />'+
+            '<param name="flashvars" value="domain='+domain+'&callback=qike.localStorage.flashCallback" />'+
         '</object>';
     }else{
-        flash='<embed src="'+domain+'GitHub/localStorage/swf/saveLocalData20131015.swf" quality="high" bgcolor="#ffffff" width="740px" height="184px" align="middle" play="true" loop="false" wmode="Transparent" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.adobe.com/go/getflashplayer"></embed>';
+        flash='<embed src="'+domain+'GitHub/localStorage/swf/saveLocalData20131015.swf" quality="high" bgcolor="#ffffff" width="740px" height="184px" align="middle" play="true" loop="false" wmode="Transparent" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.adobe.com/go/getflashplayer" flashvars="domain='+domain+'&callback=qike.localStorage.flashCallback"></embed>';
     }
-
+    console.log('flash html string is: '+flash)
     div.innerHTML=flash;
-
+    console.log('put flash string into div')
     if(m.isIE){
         m[domain].dom = div.getElementsByTagName('object')[0];
     }else{
         m[domain].dom = div.getElementsByTagName('embed')[0];
     }
+    console.log('get the flash dom')
 
     d.getElementsByTagName('body')[0].appendChild(div);
     
+    console.log('put div into body')
+/*
     if(window.addEventListener){
-        dom.addEventListener('load',function(e){
+        m[domain].dom.addEventListener('load',function(e){
             callback();
         });
     }else{
-        dom.attachEvent('onload',function(){
+        m[domain].dom.attachEvent('onload',function(){
             callback();
         });
     }
+
 
     // 在IFrame加载完成之后的遍历执行
     function callback(){
@@ -136,25 +158,58 @@ qike.localStorage.loadFlash=function(domain,obj){
             win,
             curr,res;
 
+        console.log('flash is loading')
+
+
         // 标识IFrame加载完成
         m[domain].isLoading=2;
 
         // 存储在IFrame里面的localStorage 但凡使用IFrame的，必然是支持localStorage的场景
-        iframeLocalStorage=m[domain].iframeLocalStorage=iframe.contentWindow.localStorage;
+        flashLocalStorage=m[domain].dom;
 
         for(i;i<len;i++){
             curr = arr[i];
             if(curr.action === 'getItem' || curr.action === 'removeItem'){
-                res=iframeLocalStorage[curr.action](curr.key);
+                res=flashLocalStorage[curr.action](curr.key);
             }else if(curr.action === 'key'){
-                res=iframeLocalStorage.key(curr.key);
+                res=flashLocalStorage.key(curr.key);
             }else if(curr.action === 'clear'){
-                res=iframeLocalStorage.clear();
+                res=flashLocalStorage.clear();
             }
             typeof curr.callback === 'function' && curr.callback(res);
         }
     }
+*/
 };
+
+qike.localStorage.flashCallback=function(domain){
+    var arr=m[domain].actionArr,
+        len=arr.length,
+        i=0,
+        win,
+        curr,res;
+
+    console.log('flash is loading')
+
+
+    // 标识IFrame加载完成
+    m[domain].isLoading=2;
+
+    // 存储在IFrame里面的localStorage 但凡使用IFrame的，必然是支持localStorage的场景
+    flashLocalStorage=m[domain].dom;
+
+    for(i;i<len;i++){
+        curr = arr[i];
+        if(curr.action === 'getItem' || curr.action === 'removeItem'){
+            res=flashLocalStorage[curr.action](curr.key);
+        }else if(curr.action === 'key'){
+            res=flashLocalStorage.key(curr.key);
+        }else if(curr.action === 'clear'){
+            res=flashLocalStorage.clear();
+        }
+        typeof curr.callback === 'function' && curr.callback(res);
+    }
+}
 
 qike.localStorage.currDomain = location.protocol+'//'+location.hostname+(location.port&&':'+location.port)+'/';
 
@@ -163,7 +218,7 @@ qike.localStorage.getItem = function(key,domain,callback){
     
     // 格式化domain
     domain = m.formatDomain(domain);
-
+    console.log('finish format domain')
     // 支持localStorage
     if(m.isSupportLocalStorage){
         if(domain===m.currDomain){
@@ -196,20 +251,23 @@ qike.localStorage.getItem = function(key,domain,callback){
     // 不支持localStorage，使用FlashCookie
     // 针对FlashCookie，不管任何域名都是需要加载对应域名下的swf文件
     if(!m.isSupportLocalStorage){
-        
+        console.log('unsupport localStorage')
         if(m[domain] === undefined) m[domain]={};
 
         switch(m[domain].isLoading){
             case 1:
                 // 正在加载，则把操作放到队列中
+                console.log('flash is loading');
                 m[domain].actionArr.push({action:'getItem',key:key,callback:callback});
                 return;
             case 2:
                 // 加载完毕，则直接操作
+                console.log('flash is loaded');
                 res=m[domain].flashCookie.getItem(key);
                 typeof callback === 'function' && callback(res);
                 return res;
             default:
+                console.log('flash is unload');
                 m.loadFlash(domain,{action:'getItem',key:key,callback:callback});
                 return;
         }
