@@ -9,6 +9,8 @@ window.qike.localStorage.isSupportLocalStorage=(function(){
         return false;
     }
 })();
+
+// 跨域获取数据时，加载对应域名下的文件
 qike.localStorage.loadIframe=function(domain,obj){
     var m = this,d=document,iframe;
     m[domain]={};
@@ -49,8 +51,10 @@ qike.localStorage.loadIframe=function(domain,obj){
             i=0,
             win,
             curr,res;
+
         // 标识IFrame加载完成
         m[domain].isLoading=2;
+
         // 存储在IFrame里面的localStorage 但凡使用IFrame的，必然是支持localStorage的场景
         iframeLocalStorage=m[domain].iframeLocalStorage=iframe.contentWindow.localStorage;
 
@@ -73,20 +77,8 @@ qike.localStorage.currDomain = location.protocol+'//'+location.hostname+(locatio
 qike.localStorage.getItem = function(key,domain,callback){
     var m = this,res;
     
-    // 如果domain没设定，使用默认的
-    if(!domain){
-        domain = m.currDomain;
-    }
-
-    // domain不包含http(s)的字符，则强制给加上http://
-    if(!domain.match(/https?/)){
-        domain = 'http://'+domain;
-    }
-    
-    // 如果domain在最后没有加/，则强制加上
-    if(!domain.match(/\/$/)){
-        domain = domain+'/';
-    }
+    // 格式化domain
+    domain = m.formatDomain(domain);
 
     // 支持localStorage
     if(m.isSupportLocalStorage){
@@ -104,7 +96,7 @@ qike.localStorage.getItem = function(key,domain,callback){
                 case 1:
                     // 正在加载，则把操作放到队列中
                     m[domain].actionArr.push({action:'getItem',key:key,callback:callback});
-                    break;
+                    return;
                 case 2:
                     // 加载完毕，则直接操作
                     res=m[domain].iframeLocalStorage.getItem(key);
@@ -112,51 +104,169 @@ qike.localStorage.getItem = function(key,domain,callback){
                     return res;
                 default:
                     m.loadIframe(domain,{action:'getItem',key:key,callback:callback});
+                    return;
             }
         }
     }
 };
 qike.localStorage.setItem = function(key,value,domain,callback){
     var m = this,res;
+    
+    // 格式化domain
+    domain = m.formatDomain(domain);
+
+    // 支持localStorage
     if(m.isSupportLocalStorage){
-        // 
-        if(!domain || domain===m.currDomain){
+        
+        // 域名与当前的相同
+        if(domain===m.currDomain){
             res  = localStorage.setItem(key,value);
             typeof callback === 'function' && callback();
             return res;
+        }else{
+
+            // 域名与当前的不相同
+            if(m[domain] === undefined) m[domain]={};
+            switch(m[domain].isLoading){
+                case 1:
+                    // 正在加载，则把操作放到队列中
+                    m[domain].actionArr.push({action:'setItem',key:key,value:value,callback:callback});
+                    return;
+                case 2:
+                    // 加载完毕，则直接操作
+                    res=m[domain].iframeLocalStorage.setItem(key,value);
+                    typeof callback === 'function' && callback(res);
+                    return res;
+                default:
+                    m.loadIframe(domain,{action:'setItem',key:key,value:value,callback:callback});
+                    return;
+            }
         }
     }
 };
 qike.localStorage.removeItem = function(key,domain,callback){
     var m = this,res;
+
+    // 格式化domain
+    domain = m.formatDomain(domain);
+
+    // 支持localStorage
     if(m.isSupportLocalStorage){
         // 域名没设定或者与当前的相同
         if(!domain || domain===m.currDomain){
             res = localStorage.removeItem(key);
             typeof callback === 'function' && callback();
             return res;
+        }else{
+
+            // 域名与当前的不相同
+            if(m[domain] === undefined) m[domain]={};
+            switch(m[domain].isLoading){
+                case 1:
+                    // 正在加载，则把操作放到队列中
+                    m[domain].actionArr.push({action:'removeItem',key:key,callback:callback});
+                    return;
+                case 2:
+                    // 加载完毕，则直接操作
+                    res=m[domain].iframeLocalStorage.removeItem(key);
+                    typeof callback === 'function' && callback(res);
+                    return res;
+                default:
+                    m.loadIframe(domain,{action:'removeItem',key:key,callback:callback});
+                    return;
+            }
         }
     }
 };
 qike.localStorage.key=function(index,domain,callback){
     var m = this,res;
+
+    // 格式化domain
+    domain = m.formatDomain(domain);
+
+    // 支持localStorage
     if(m.isSupportLocalStorage){
         // 域名没设定或者与当前的相同
         if(!domain || domain===m.currDomain){
             res = localStorage.key(index);
             typeof callback === 'function' && callback();
             return res;
+        }else{
+
+            // 域名与当前的不相同
+            if(m[domain] === undefined) m[domain]={};
+            switch(m[domain].isLoading){
+                case 1:
+                    // 正在加载，则把操作放到队列中
+                    m[domain].actionArr.push({action:'key',index:index,callback:callback});
+                    return;
+                case 2:
+                    // 加载完毕，则直接操作
+                    res=m[domain].iframeLocalStorage.key(index);
+                    typeof callback === 'function' && callback(res);
+                    return res;
+                default:
+                    m.loadIframe(domain,{action:'key',index:index,callback:callback});
+                    return;
+            }
         }
     }
 };
 qike.localStorage.clear=function(domain,callback){
     var m = this,res;
+
+    // 格式化domain
+    domain = m.formatDomain(domain);
+
+    // 支持localStorage
     if(m.isSupportLocalStorage){
         // 域名没设定或者与当前的相同
         if(!domain || domain===m.currDomain){
             res = localStorage.clear();
             typeof callback === 'function' && callback();
             return res;
+        }else{
+
+            // 域名与当前的不相同
+            if(m[domain] === undefined) m[domain]={};
+
+            switch(m[domain].isLoading){
+                case 1:
+                    // 正在加载，则把操作放到队列中
+                    m[domain].actionArr.push({action:'clear',callback:callback});
+                    return;
+                case 2:
+                    // 加载完毕，则直接操作
+                    res=m[domain].iframeLocalStorage.clear();
+                    typeof callback === 'function' && callback(res);
+                    return res;
+                default:
+                    m.loadIframe(domain,{action:'clear',callback:callback});
+                    return;
+            }
+
         }
     }
 };
+
+// 按照规则格式化传进来的域名
+qike.localStorage.formatDomain=function(domain){
+    var m = this;
+    
+    // 如果domain没设定，使用默认的
+    if(!domain){
+        domain = m.currDomain;
+    }
+
+    // domain不包含http(s)的字符，则强制给加上http://
+    if(!domain.match(/https?/)){
+        domain = 'http://'+domain;
+    }
+    
+    // 如果domain在最后没有加/，则强制加上
+    if(!domain.match(/\/$/)){
+        domain = domain+'/';
+    }
+
+    return domain;
+}
