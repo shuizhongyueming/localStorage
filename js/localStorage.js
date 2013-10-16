@@ -80,6 +80,7 @@ qike.localStorage.loadIframe=function(domain,obj){
     }
 };
 
+/*
 // 获取指定域名下的FlashCookie的数据时，需要加载对应域名下的Flash
 qike.localStorage.loadFlash=function(domain,obj){
     var m = this,d=document,div,flash;
@@ -87,14 +88,7 @@ qike.localStorage.loadFlash=function(domain,obj){
     console.log('function loadFlash');
 
     m[domain]={};
-    // 存储在加载过程中，收集到的操作请求，加载完成之后，遍历运行
-    // {
-    //  action: getItem,
-    //  key: 'test',
-    //  value: null,
-    //  index: null,
-    //  callback: callback
-    // }
+
     m[domain].actionArr=[];
     m[domain].actionArr.push(obj);
     
@@ -104,13 +98,6 @@ qike.localStorage.loadFlash=function(domain,obj){
     div=d.createElement('div');
 
     console.log('createElement div')
-
-    // div.style.visibility='hidden';
-    // div.style.position='absolute';
-    // div.style.top='0px';
-    // div.style.bottom='0px';
-    // div.style.width='1px';
-    // div.style.height='1px';
 
     console.log('hide div')
 
@@ -143,50 +130,9 @@ qike.localStorage.loadFlash=function(domain,obj){
     d.getElementsByTagName('body')[0].appendChild(div);
     
     console.log('put div into body')
-/*
-    if(window.addEventListener){
-        m[domain].dom.addEventListener('load',function(e){
-            callback();
-        });
-    }else{
-        m[domain].dom.attachEvent('onload',function(){
-            callback();
-        });
-    }
 
-
-    // 在IFrame加载完成之后的遍历执行
-    function callback(){
-        var arr=m[domain].actionArr,
-            len=arr.length,
-            i=0,
-            win,
-            curr,res;
-
-        console.log('flash is loading')
-
-
-        // 标识IFrame加载完成
-        m[domain].isLoading=2;
-
-        // 存储在IFrame里面的localStorage 但凡使用IFrame的，必然是支持localStorage的场景
-        flashLocalStorage=m[domain].dom;
-
-        for(i;i<len;i++){
-            curr = arr[i];
-            if(curr.action === 'getItem' || curr.action === 'removeItem'){
-                res=flashLocalStorage[curr.action](curr.key);
-            }else if(curr.action === 'key'){
-                res=flashLocalStorage.key(curr.key);
-            }else if(curr.action === 'clear'){
-                res=flashLocalStorage.clear();
-            }
-            typeof curr.callback === 'function' && curr.callback(res);
-        }
-    }
-*/
 };
-
+*/
 qike.localStorage.flashCallback=function(domain){
     alert('aa')
     console.log('flash is loading')
