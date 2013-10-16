@@ -211,7 +211,7 @@ qike.localStorage.getItem = function(key,domain,callback){
             m[domain].actionArr.push({action:'getItem',key:key,callback:callback});
         }else{
             // flash加载完毕
-            res = m[domain].get(key);
+            res = m[domain].flashLocalStorage.get(key);
             typeof callback === 'function' && callback(res);
         }
     }
@@ -261,7 +261,7 @@ qike.localStorage.setItem = function(key,value,domain,callback){
             m[domain].actionArr.push({action:'setItem',key:key,value:value,callback:callback});
         }else{
             // flash加载完毕
-            res = m[domain].set(key,value);
+            res = m[domain].flashLocalStorage.set(key,value);
             typeof callback === 'function' && callback(res);
         }
     }
