@@ -12,6 +12,7 @@ window.qike.localStorage.isSupportLocalStorage=(function(){
 
 // 跨域获取LocalStorage数据时，加载对应域名下的文件
 qike.localStorage.loadIframe=function(domain,obj){
+    console.log('function loadIframe')
     var m = this,d=document,iframe;
     m[domain]={};
     // 存储在加载过程中，收集到的操作请求，加载完成之后，遍历运行
@@ -26,6 +27,7 @@ qike.localStorage.loadIframe=function(domain,obj){
     m[domain].actionArr.push(obj);
     // isLoading  1 ==> 正在加载  2 ==> 加载完毕 undefined ==> 未加载
     m[domain].isLoading=1;
+    console.log('createElement iframe')
     iframe=d.createElement('iframe');
     iframe.width='0';
     iframe.height='0';
@@ -33,15 +35,22 @@ qike.localStorage.loadIframe=function(domain,obj){
     iframe.src=domain+'localStorage.html';
     m[domain].dom = iframe;
     d.getElementsByTagName('body')[0].appendChild(iframe);
+    console.log('append iframe')
     
-    if(window.addEventListener){
-        iframe.addEventListener('load',function(e){
-            callback();
-        });
-    }else{
-        iframe.attachEvent('onload',function(){
-            callback();
-        });
+    // 支持localStorage的时候，是由iframe的onload事件来知晓是否加载完毕。
+    // 不支持localStorage的时候，iframe内部会加载flash，
+    // 在flash加载完毕的时候，会根据flashvars里面的参数回调父级的flashCallback
+    if(m.isSupportLocalStorage){
+        console.log('isSupportLocalStorage')
+        if(window.addEventListener){
+            iframe.addEventListener('load',function(e){
+                callback();
+            });
+        }else{
+            iframe.attachEvent('onload',function(){
+                callback();
+            });
+        }
     }
 
     // 在IFrame加载完成之后的遍历执行
@@ -223,7 +232,7 @@ qike.localStorage.getItem = function(key,domain,callback){
                 return res;
             default:
                 console.log('flash is unload');
-                m.loadFlash(domain,{action:'getItem',key:key,callback:callback});
+                m.loadIframe(domain,{action:'getItem',key:key,callback:callback});
                 return;
         }
     }
