@@ -91,3 +91,16 @@ localStorage比较适合用来存储那些在页面加载完成之后才需要�
 
 + doamin 是要清空的数据所在的域名
 + callback 是取得key对应的value之后的回调函数 callback接收的参数是clear方法的返回值，一般是undefined
+
+
+## 关于实施方案的部署
+
+首先，项目页面里面需要引入localStorage.js
+
+然后是localStorage的跨域问题，需要在各个域名的服务器下，放置一个head里面有document.domain='(your domain)'的空localStorage.html文件。这个是跨域获取localStorage数据的时候，需要通过iframe的方式加载该页面到当前页面，然后访问iframe里面的contentWindow，取到对应域名下的localStorage数据。
+
+接着是FlashCookie的部署。FlashCookie的数据是按照swf文件的地址进行划分的。为了能实现不同域名下有不同数据的效果。需要在不同域名的服务器下放置一份localStorage.swf。
+
+html和swf的放置路径必须是各自保持一个相同的格式。然后在localStorage.js里面有两个参数：qike.localStorage.baseHtmlUrl和qike.localStorage.baseFlashUrl。这两个值分别是html和swf在各个服务器下的摒除domain之后的路径。
+
+假设localStorage.html和localStorage.swf都是放在根目录下。那么qike.localStorage.baseHtmlUrl='localStorage.html',qike.localStorage.baseHtmlUrl='localStorage.swf'
