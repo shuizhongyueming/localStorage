@@ -1,4 +1,4 @@
-define(function(require){
+(function(require){
     lcStorage = window.lcStorage = {};
 
     // domain+baseHtmlUrl ==> 跨域文件的地址
@@ -304,5 +304,10 @@ define(function(require){
         return domain.toLowerCase();
     }
 
-    return lcStorage;
-});
+    // CommonJS AMD 
+    if ( typeof define === "function" && define.amd) {
+        define([], function(){
+            return lcStorage;
+        });
+    }
+}());
