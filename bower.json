@@ -1,0 +1,27 @@
+{
+  "name": "localStorage",
+  "version": "1.0.0",
+  "homepage": "https://github.com/shuizhongyueming/localStorage",
+  "authors": [
+    "shuizhongyueming <shuizhongyueming@gmail.com>"
+  ],
+  "description": "具备跨域和向下兼容特性的前端本地存储的实现",
+  "main": "js/localStorage.js",
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "keywords": [
+    "localStorage",
+    "flashCookies",
+    "crossDomain"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
