@@ -28,7 +28,7 @@ localStorage比较适合用来存储那些在页面加载完成之后才需要�
 
 调用方式：
 
-    qike.localStorage.getItem(key,domain,callback);
+    lcStorage.getItem(key,domain,callback);
 
 参数说明：
 
@@ -42,7 +42,7 @@ localStorage比较适合用来存储那些在页面加载完成之后才需要�
 
 调用方式：
 
-    qike.localStorage.setItem(key,value,domain,callback);
+    lcStorage.setItem(key,value,domain,callback);
 
 参数说明：
 
@@ -57,7 +57,7 @@ localStorage比较适合用来存储那些在页面加载完成之后才需要�
 
 调用方式：
 
-    qike.localStorage.removeItem(key,domain,callback);
+    lcStorage.removeItem(key,domain,callback);
 
 参数说明：
 
@@ -71,7 +71,7 @@ localStorage比较适合用来存储那些在页面加载完成之后才需要�
 
 调用方式：
 
-    qike.localStorage.key(index,domain,callback);
+    lcStorage.key(index,domain,callback);
 
 参数说明：
 
@@ -85,7 +85,7 @@ localStorage比较适合用来存储那些在页面加载完成之后才需要�
 
 调用方式：
 
-    qike.localStorage.clear(domain,callback);
+    lcStorage.clear(domain,callback);
 
 参数说明：
 
@@ -101,6 +101,6 @@ localStorage比较适合用来存储那些在页面加载完成之后才需要�
 
 接着是FlashCookie的部署。FlashCookie的数据是按照swf文件的地址进行划分的。为了能实现不同域名下有不同数据的效果。需要在不同域名的服务器下放置一份localStorage.swf。
 
-html和swf的放置路径必须是各自保持一个相同的格式。然后在localStorage.js里面有两个参数：qike.localStorage.baseHtmlUrl和qike.localStorage.baseFlashUrl。这两个值分别是html和swf在各个服务器下的摒除domain之后的路径。
+html和swf的放置路径必须是各自保持一个相同的格式。然后在localStorage.js里面有两个参数：lcStorage.baseHtmlUrl和lcStorage.baseFlashUrl。这两个值分别是html和swf在各个服务器下的摒除domain之后的路径。
 
-假设localStorage.html和localStorage.swf都是放在根目录下。那么qike.localStorage.baseHtmlUrl='localStorage.html',qike.localStorage.baseHtmlUrl='localStorage.swf'
+假设localStorage.html和localStorage.swf都是放在根目录下。那么lcStorage.baseHtmlUrl='localStorage.html',lcStorage.baseHtmlUrl='localStorage.swf'
