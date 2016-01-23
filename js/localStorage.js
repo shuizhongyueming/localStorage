@@ -1,3 +1,10 @@
+/**
+ * lcStorage.getItem(key,domain,callback);
+ * lcStorage.setItem(key,value,domain,callback);
+ * lcStorage.removeItem(key,domain,callback);
+ * lcStorage.key(index,domain,callback);
+ * lcStorage.clear(domain,callback);
+ */
 (function(require){
     lcStorage = window.lcStorage = {};
 
